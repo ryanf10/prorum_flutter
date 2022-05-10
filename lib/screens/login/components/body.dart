@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/components/already_have_an_account_check.dart';
+import 'package:prorum_flutter/components/dialog_box.dart';
 import 'package:prorum_flutter/components/rounded_button.dart';
 import 'package:prorum_flutter/components/rounded_input_field.dart';
 import 'package:prorum_flutter/components/rounded_password_field.dart';
+import 'package:prorum_flutter/constant.dart';
+import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/screens/login/components/background.dart';
 import 'package:prorum_flutter/screens/signup/signup_screen.dart';
 
@@ -61,8 +66,9 @@ class _BodyState extends State<Body> {
                 ),
                 RoundedButton(
                   text: "LOGIN",
-                  press: () {
+                  press: () async {
                     String? msg;
+                    bool success = false;
                     if (email == null || email == '') {
                       msg = 'Please enter your email';
                       setState(() {
@@ -71,21 +77,38 @@ class _BodyState extends State<Body> {
                     } else if (!RegExp(
                             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
                         .hasMatch(email!)) {
-                          msg = "Please enter a valid email";
+                      msg = "Please enter a valid email";
                     } else if (password == null || password == '') {
                       msg = 'Please enter your password';
                       setState(() {
                         errorPassword = true;
                       });
-                    } else if (password!.length < 6){
+                    } else if (password!.length < 6) {
                       msg = 'Password minimum length is 6';
+                    } else {
+                      final req = await FetchApi.post(
+                        baseApiUrl + "/auth/login",
+                        {
+                          'email': email,
+                          'password': password,
+                        },
+                      );
+                      var res = jsonDecode(req.body);
+                      if(res['statusCode'] == 200){
+                        msg = "Success";
+                        success = true;
+                      }else if(res['statusCode'] == 401){
+                        msg = "Invalid credentials";
+                        setState(() {
+                          errorEmail = true;
+                          errorPassword = true;
+                        });
+                      }
                     }
                     showDialog(
                       context: context,
                       builder: (context) {
-                        return AlertDialog(
-                          content: Text(msg ?? ""),
-                        );
+                        return DialogBox(content: Text(msg ?? ''));
                       },
                     );
                   },
@@ -111,3 +134,4 @@ class _BodyState extends State<Body> {
     );
   }
 }
+

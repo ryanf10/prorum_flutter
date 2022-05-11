@@ -5,6 +5,7 @@ class RoundedButton extends StatelessWidget {
   final String text;
   final VoidCallback press;
   final Color color, textColor;
+  final bool isDisabled;
 
   const RoundedButton({
     Key? key,
@@ -12,6 +13,7 @@ class RoundedButton extends StatelessWidget {
     required this.press,
     this.color = kPrimaryColor,
     this.textColor = Colors.white,
+    this.isDisabled = false,
   }) : super(key: key);
 
   @override
@@ -24,7 +26,7 @@ class RoundedButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(30),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              primary: color,
+              primary: isDisabled ? Colors.grey : color,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15),
               ),

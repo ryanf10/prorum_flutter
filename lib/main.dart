@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/constant.dart';
+import 'package:prorum_flutter/screens/home/home_screen.dart';
 import 'package:prorum_flutter/screens/welcome/welcome_screen.dart';
+import 'package:prorum_flutter/session.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Session.initState();
   runApp(const MyApp());
 }
 
@@ -24,14 +28,15 @@ class MyApp extends StatelessWidget {
       900: Color.fromRGBO(0, 66, 66, 1.0),
     };
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Prorum',
-        // theme: ThemeData(primarySwatch: const MaterialColor(0xFF007E7E, color)),
-        theme: ThemeData(
-          primaryColor: kPrimaryColor,
-          scaffoldBackgroundColor: Colors.white,
-          // primarySwatch: const MaterialColor(0xFF007E7E, color)
-        ),
-        home: const WelcomeScreen());
+      debugShowCheckedModeBanner: false,
+      title: 'Prorum',
+      // theme: ThemeData(primarySwatch: const MaterialColor(0xFF007E7E, color)),
+      theme: ThemeData(
+        primaryColor: kPrimaryColor,
+        scaffoldBackgroundColor: Colors.white,
+        // primarySwatch: const MaterialColor(0xFF007E7E, color)
+      ),
+      home: Session.isLoggedin ? const HomeScreen() : const WelcomeScreen(),
+    );
   }
 }

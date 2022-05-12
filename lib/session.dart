@@ -1,23 +1,38 @@
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
+
+import 'models/user.dart';
 
 class Session {
   static const storage = FlutterSecureStorage();
   static bool isLoggedin = false;
+  static User? user;
 
   static initState() async {
     String cookie = await storage.read(key: 'cookie') ?? '';
     if (cookie != '') {
       FetchApi.headers['cookie'] = cookie;
+      await Session.getUser();
+    }
+  }
 
-      final y =
-          await FetchApi.get('https://nest-prorum.herokuapp.com/api/users/me');
-      Map<String, dynamic> body = jsonDecode(y.body);
+  static getUser() async {
+    final response = await FetchApi.get(baseApiUrl + '/users/me');
+    Map<String, dynamic> body = jsonDecode(response.body);
 
-      if (body['statusCode'] == 200) {
-        Session.isLoggedin = true;
+    if (body['statusCode'] == 200) {
+      Session.isLoggedin = true;
+      Session.user = User.fromJson(body['data']['user']);
+
+      final responseForAvatar =
+          await FetchApi.get(baseApiUrl + '/users/me/avatar');
+      Map<String, dynamic> bodyForAvatar = jsonDecode(responseForAvatar.body);
+
+      if(bodyForAvatar['statusCode'] == 200){
+        Session.user!.base64Avatar = bodyForAvatar['data'];
       }
     }
   }

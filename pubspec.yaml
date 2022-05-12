@@ -75,6 +75,7 @@ flutter:
     - assets/images/main_bottom.png
     - assets/images/login_bottom.png
     - assets/images/signup_top.png
+    - assets/images/avatar.jpg
 
   #   - images/a_dot_ham.jpeg
 

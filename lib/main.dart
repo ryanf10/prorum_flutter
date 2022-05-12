@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: Colors.white,
-        // primarySwatch: const MaterialColor(0xFF007E7E, color)
+        primarySwatch: const MaterialColor(0xFF007E7E, color)
       ),
       home: Session.isLoggedin ? const HomeScreen() : const WelcomeScreen(),
     );

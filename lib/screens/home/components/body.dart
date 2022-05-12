@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:prorum_flutter/screens/home/components/feed_tab.dart';
 
 class Body extends StatelessWidget {
   final int currentTabIndex;
@@ -9,6 +10,6 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return currentTabIndex == 0 ? Text('Category') : Text('Feed');
+    return currentTabIndex == 0 ? Text('Category') : FeedTab();
   }
 }

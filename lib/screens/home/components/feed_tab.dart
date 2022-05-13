@@ -5,6 +5,7 @@ import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
+import 'package:prorum_flutter/screens/home/components/rounded_toogle_button.dart';
 import 'package:prorum_flutter/screens/post/detail_post.dart';
 
 class FeedTab extends StatefulWidget {
@@ -15,8 +16,15 @@ class FeedTab extends StatefulWidget {
 }
 
 class _FeedTabState extends State<FeedTab> {
+  bool isLoading = true;
+  double selectedIndex = -1;
   List<Post> posts = [];
-  List<Post> duplicatePosts = [];
+  List<Post> duplicateActivePosts = [];
+  List<Post> duplicateAllPosts = [];
+  List<Post> duplicateFavoritesPosts = [];
+  List<bool> isSelected = [true, false];
+  String? query;
+  TextEditingController controllerSearch = TextEditingController();
 
   @override
   void initState() {
@@ -25,40 +33,75 @@ class _FeedTabState extends State<FeedTab> {
   }
 
   Future getPosts() async {
-    final response = await FetchApi.get(baseApiUrl + '/forum/posts');
+    final responseAll = await FetchApi.get(baseApiUrl + '/forum/posts');
 
-    final body = jsonDecode(response.body);
+    final bodyAll = jsonDecode(responseAll.body);
 
-    if (body['statusCode'] == 200) {
-      for (int i = 0; i < body['data'].length; i++) {
-        duplicatePosts.add(Post.fromJson(body['data'][i]));
+    if (bodyAll['statusCode'] == 200) {
+      for (int i = 0; i < bodyAll['data'].length; i++) {
+        duplicateAllPosts.add(Post.fromJson(bodyAll['data'][i]));
       }
     }
 
-    setState(() {
-      posts = duplicatePosts;
-    });
+    final responseFavorite =
+        await FetchApi.get(baseApiUrl + '/forum/favorites');
+
+    final bodyFavorite = jsonDecode(responseFavorite.body);
+
+    if (bodyFavorite['statusCode'] == 200) {
+      for (int i = 0; i < bodyFavorite['data'].length; i++) {
+        duplicateFavoritesPosts
+            .add(Post.fromJson(bodyFavorite['data'][i]['post']));
+      }
+    }
+
+    if (selectedIndex == -1) {
+      setState(() {
+        posts = duplicateAllPosts;
+        duplicateActivePosts = duplicateAllPosts;
+        isLoading = false;
+      });
+    } else if (selectedIndex == 1) {
+      setState(() {
+        posts = duplicateFavoritesPosts;
+        duplicateActivePosts = duplicateFavoritesPosts;
+        isLoading = false;
+      });
+    }
   }
 
   Future refreshData() async {
-    duplicatePosts = [];
-    getPosts();
+    setState(() {
+      isLoading = true;
+    });
+    duplicateAllPosts = [];
+    duplicateActivePosts = [];
+    duplicateFavoritesPosts = [];
+    await getPosts();
+    updateListData();
   }
 
   searchItem(value) {
-    if (value != null && value != '') {
+    setState(() {
+      query = value;
+    });
+    updateListData();
+  }
+
+  updateListData() {
+    if (query != null && query != '') {
       List<Post> temp = [];
-      for (int i = 0; i < duplicatePosts.length; i++) {
-        if (duplicatePosts[i]
+      for (int i = 0; i < duplicateActivePosts.length; i++) {
+        if (duplicateActivePosts[i]
                 .title
                 .toLowerCase()
-                .contains(value.toLowerCase()) ||
-            duplicatePosts[i]
+                .contains(query!.toLowerCase()) ||
+            duplicateActivePosts[i]
                 .category
                 .name
                 .toLowerCase()
-                .contains(value.toLowerCase())) {
-          temp.add(duplicatePosts[i]);
+                .contains(query!.toLowerCase())) {
+          temp.add(duplicateActivePosts[i]);
         }
       }
       setState(() {
@@ -66,7 +109,7 @@ class _FeedTabState extends State<FeedTab> {
       });
     } else {
       setState(() {
-        posts = duplicatePosts;
+        posts = duplicateActivePosts;
       });
     }
   }
@@ -76,13 +119,33 @@ class _FeedTabState extends State<FeedTab> {
     return RefreshIndicator(
       onRefresh: refreshData,
       color: kPrimaryColor,
-      child: posts.isNotEmpty
+      child: !isLoading
           ? Column(
               children: [
                 RoundedRectangleInputField(
                   hintText: "search",
                   onChanged: searchItem,
                   icon: Icons.search,
+                  controller: controllerSearch,
+                ),
+                RoundedToogleButton(
+                  selected: selectedIndex,
+                  onTapAll: () {
+                    setState(() {
+                      // posts = duplicateAllPosts;
+                      duplicateActivePosts = duplicateAllPosts;
+                      selectedIndex = -1;
+                    });
+                    updateListData();
+                  },
+                  onTapFavorites: () {
+                    setState(() {
+                      // posts = duplicateFavoritesPosts;
+                      duplicateActivePosts = duplicateFavoritesPosts;
+                      selectedIndex = 1;
+                    });
+                    updateListData();
+                  },
                 ),
                 Expanded(
                   child: ListView.builder(
@@ -95,6 +158,7 @@ class _FeedTabState extends State<FeedTab> {
                           title: Text(
                             posts[index].title,
                             style: const TextStyle(fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
                           subtitle: Text(posts[index].category.name),
                           onTap: () {
@@ -106,12 +170,14 @@ class _FeedTabState extends State<FeedTab> {
                                 },
                               ),
                             ).whenComplete(() {
-                              setState(() {
-                                posts = [];
-                              });
                               refreshData();
+                              setState(() {
+                                controllerSearch.text = query ?? '';
+                              });
+                              updateListData();
                             });
                           },
+                          trailing: const Icon(Icons.arrow_forward_ios),
                         ),
                       );
                     },

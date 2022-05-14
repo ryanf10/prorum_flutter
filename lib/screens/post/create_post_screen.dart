@@ -14,14 +14,14 @@ import 'package:prorum_flutter/models/category.dart';
 
 import 'package:image_picker/image_picker.dart';
 
-class CreatePost extends StatefulWidget {
-  const CreatePost({Key? key}) : super(key: key);
+class CreatePostScreen extends StatefulWidget {
+  const CreatePostScreen({Key? key}) : super(key: key);
 
   @override
-  State<CreatePost> createState() => _CreatePostState();
+  State<CreatePostScreen> createState() => _CreatePostScreenState();
 }
 
-class _CreatePostState extends State<CreatePost> {
+class _CreatePostScreenState extends State<CreatePostScreen> {
   String? title, description, categoryId;
   File? image;
   String? filename;

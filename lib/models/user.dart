@@ -18,7 +18,7 @@ class User{
     return User(
       userId: json['id'],
       username: json['username'],
-      email: json['email']!,
+      email: json['email'] ?? null,
     );
   }
 }

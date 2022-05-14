@@ -1,14 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:prorum_flutter/components/floating_button.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
 import 'package:prorum_flutter/screens/home/components/rounded_toogle_button.dart';
-import 'package:prorum_flutter/screens/post/create_post.dart';
-import 'package:prorum_flutter/screens/post/detail_post.dart';
+import 'package:prorum_flutter/screens/post/detail_post_screen.dart';
 
 class FeedTab extends StatefulWidget {
   const FeedTab({Key? key}) : super(key: key);
@@ -38,6 +36,7 @@ class _FeedTabState extends State<FeedTab> {
     final responseAll = await FetchApi.get(baseApiUrl + '/forum/posts?sortBy=time&dir=desc');
 
     final bodyAll = jsonDecode(responseAll.body);
+    print(bodyAll);
 
     if (bodyAll['statusCode'] == 200) {
       for (int i = 0; i < bodyAll['data'].length; i++) {
@@ -168,7 +167,7 @@ class _FeedTabState extends State<FeedTab> {
                               context,
                               MaterialPageRoute(
                                 builder: (BuildContext context) {
-                                  return DetailPost(post: posts[index]);
+                                  return DetailPostScreen(postId: posts[index].postId);
                                 },
                               ),
                             ).whenComplete(() {

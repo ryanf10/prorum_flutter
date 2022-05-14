@@ -1,27 +1,38 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/gestures.dart';
+import 'dart:math';
+
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:prorum_flutter/components/rounded_dropdown_button.dart';
-import 'package:prorum_flutter/screens/post/components/image_picker_button.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_multiline_input_field.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/category.dart';
+import 'package:prorum_flutter/models/detail_post.dart';
+import 'package:prorum_flutter/screens/post/components/image_picker_button.dart';
 
-import 'package:image_picker/image_picker.dart';
-
-class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key}) : super(key: key);
+class EditPostScreen extends StatefulWidget {
+  final DetailPost detailPost;
+  final String? base64Image;
+  const EditPostScreen({
+    Key? key,
+    required this.detailPost,
+    this.base64Image,
+  }) : super(key: key);
 
   @override
-  State<CreatePostScreen> createState() => _CreatePostScreenState();
+  State<EditPostScreen> createState() => _EditPostScreenState();
 }
 
-class _CreatePostScreenState extends State<CreatePostScreen> {
+class _EditPostScreenState extends State<EditPostScreen> {
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
+  TextEditingController categoryIdController = TextEditingController();
   String? title, description, categoryId;
   File? image;
   String? filename;
@@ -53,7 +64,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   submitPost() async {
     var request = http.MultipartRequest(
-        'POST', Uri.parse(baseApiUrl + '/forum/posts'));
+        'PATCH',
+        Uri.parse(baseApiUrl +
+            '/forum/posts/' +
+            widget.detailPost.postId.toString()));
     request.headers.addAll(FetchApi.headers);
     request.fields['title'] = title!;
     request.fields['description'] = description!;
@@ -73,8 +87,33 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
+    title = widget.detailPost.title;
+    description = widget.detailPost.description;
+    categoryId = widget.detailPost.category.categoryId.toString();
+    titleController.text = title!;
+    descriptionController.text = description!;
+    categoryIdController.text = categoryId!;
+    if (widget.base64Image != null) {
+      convertImageToFile();
+    }
     getCategories();
+  }
+
+  Future convertImageToFile() async {
+    var rng = new Random();
+
+    Directory tempDir = await getTemporaryDirectory();
+
+    String tempPath = tempDir.path;
+
+    File file = new File('$tempPath' + (rng.nextInt(100)).toString());
+    await file.writeAsBytes(base64Decode(widget.base64Image!));
+    setState(() {
+      image = file;
+      filename = 'post-${widget.detailPost.postId}.png';
+    });
   }
 
   Future getCategories() async {
@@ -100,15 +139,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: const Text('Edit Post'),
+    //     backgroundColor: Colors.white,
+    //     foregroundColor: kPrimaryColor,
+    //   ),
+    // );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: kPrimaryColor,
         title: const Text(
-          'Form',
+          'Edit Post',
           style: TextStyle(color: Colors.black),
         ),
-        centerTitle: true,
         actions: [
           TextButton(
             onPressed: submitPost,
@@ -146,7 +191,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             });
                           },
                           icon: null,
-                          controller: null,
+                          controller: titleController,
                         ),
                       ),
                       const Padding(
@@ -166,7 +211,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             });
                           },
                           icon: null,
-                          controller: null,
+                          controller: descriptionController,
                         ),
                       ),
                       const Padding(

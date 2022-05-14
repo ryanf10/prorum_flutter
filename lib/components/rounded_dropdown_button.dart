@@ -28,6 +28,7 @@ class RoundedDropdownButton extends StatelessWidget {
         isExpanded: true,
         items: items,
         onChanged: onChanged,
+        underline: SizedBox(),
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/detail_post.dart';
+import 'package:prorum_flutter/screens/post/edit_post_screen.dart';
 import 'package:prorum_flutter/screens/post/preview_image_screen.dart';
 import 'package:prorum_flutter/session.dart';
 
@@ -59,7 +60,16 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         actions: !isLoading
             ? detailPost!.user.userId == Session.user!.userId
                 ? [
-                    IconButton(onPressed: () {}, icon: Icon(Icons.edit)),
+                    IconButton(onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return EditPostScreen(detailPost: detailPost!, base64Image: base64Image,);
+                          },
+                        ),
+                      );
+                    }, icon: Icon(Icons.edit)),
                   ]
                 : []
             : [],

@@ -36,8 +36,7 @@ class _FeedTabState extends State<FeedTab> {
     final responseAll = await FetchApi.get(baseApiUrl + '/forum/posts?sortBy=time&dir=desc');
 
     final bodyAll = jsonDecode(responseAll.body);
-    print(bodyAll);
-
+    
     if (bodyAll['statusCode'] == 200) {
       for (int i = 0; i < bodyAll['data'].length; i++) {
         duplicateAllPosts.add(Post.fromJson(bodyAll['data'][i]));

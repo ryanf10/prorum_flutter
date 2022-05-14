@@ -1,11 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:prorum_flutter/components/floating_button.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
 import 'package:prorum_flutter/screens/home/components/rounded_toogle_button.dart';
+import 'package:prorum_flutter/screens/post/create_post.dart';
 import 'package:prorum_flutter/screens/post/detail_post.dart';
 
 class FeedTab extends StatefulWidget {
@@ -33,7 +35,7 @@ class _FeedTabState extends State<FeedTab> {
   }
 
   Future getPosts() async {
-    final responseAll = await FetchApi.get(baseApiUrl + '/forum/posts');
+    final responseAll = await FetchApi.get(baseApiUrl + '/forum/posts?sortBy=time&dir=desc');
 
     final bodyAll = jsonDecode(responseAll.body);
 
@@ -121,7 +123,7 @@ class _FeedTabState extends State<FeedTab> {
       color: kPrimaryColor,
       child: !isLoading
           ? Column(
-              children: [
+              children: [                
                 RoundedRectangleInputField(
                   hintText: "search",
                   onChanged: searchItem,

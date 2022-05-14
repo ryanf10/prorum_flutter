@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/constant.dart';
 
-class RoundedRectangleInputField extends StatelessWidget {
+class RoundedRectangleMultilineInputField extends StatelessWidget {
   final String hintText;
   final Function(String) onChanged;
   final IconData? icon;
   final TextEditingController? controller;
 
-  const RoundedRectangleInputField({
+  const RoundedRectangleMultilineInputField({
     Key? key,
     required this.hintText,
     required this.onChanged,
@@ -27,6 +27,8 @@ class RoundedRectangleInputField extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
           border: Border.all(width: 1.0, color: Colors.grey[400]!)),
       child: TextField(
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
         controller: controller,
         decoration: InputDecoration(
           border: InputBorder.none,

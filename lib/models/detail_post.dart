@@ -10,16 +10,19 @@ class DetailPost {
   User user;
   bool isFavorited;
   DateTime deleteableBefore;
+  DateTime createdAt;
 
-  DetailPost(
-      {required this.postId,
-      required this.title,
-      required this.description,
-      this.base64Image,
-      required this.isFavorited,
-      required this.category,
-      required this.user,
-      required this.deleteableBefore});
+  DetailPost({
+    required this.postId,
+    required this.title,
+    required this.description,
+    this.base64Image,
+    required this.isFavorited,
+    required this.category,
+    required this.user,
+    required this.deleteableBefore,
+    required this.createdAt,
+  });
 
   factory DetailPost.fromJson(Map<String, dynamic> json) {
     return DetailPost(
@@ -30,6 +33,7 @@ class DetailPost {
       category: Category.fromJson(json['category']),
       user: User.fromJson(json['user']),
       deleteableBefore: DateTime.parse(json['deleteableBefore']),
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 }

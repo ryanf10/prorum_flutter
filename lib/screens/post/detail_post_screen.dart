@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/components/circle_image.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
+import 'package:prorum_flutter/models/comment.dart';
 import 'package:prorum_flutter/models/detail_post.dart';
+import 'package:prorum_flutter/screens/post/create_comment_screen.dart';
 import 'package:prorum_flutter/screens/post/edit_post_screen.dart';
 import 'package:prorum_flutter/screens/post/preview_image_screen.dart';
 import 'package:prorum_flutter/session.dart';
@@ -25,6 +28,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   bool isLoading = true;
   DetailPost? detailPost;
   String? base64Image;
+  List<Comment> comments = [];
 
   @override
   void initState() {
@@ -37,6 +41,10 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         baseApiUrl + "/forum/posts/" + widget.postId.toString());
     final body = jsonDecode(response.body);
     print(body);
+    List<Comment> tempComment = [];
+    for (int i = 0; i < body['data']['comments'].length; i++) {
+      tempComment.add(Comment.fromJson(body['data']['comments'][i]));
+    }
 
     final responseImage = await FetchApi.get(
         baseApiUrl + "/forum/posts/" + widget.postId.toString() + "/image");
@@ -47,13 +55,14 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
       setState(() {
         detailPost = DetailPost.fromJson(body['data']);
         base64Image = bodyImage['data'];
+        comments = tempComment;
         isLoading = false;
       });
     }
   }
 
   Future refreshData() async {
-    if(mounted){
+    if (mounted) {
       setState(() {
         isLoading = true;
       });
@@ -61,21 +70,24 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     await getPost();
   }
 
-  handleFavorite() async{
-    if(detailPost!.isFavorited){
+  handleFavorite() async {
+    if (detailPost!.isFavorited) {
       setState(() {
         detailPost!.isFavorited = false;
       });
-      
-      await FetchApi.delete(baseApiUrl + "/forum/favorites/" + detailPost!.postId.toString(), null);
-    }else{
+
+      await FetchApi.delete(
+          baseApiUrl + "/forum/favorites/" + detailPost!.postId.toString(),
+          null);
+    } else {
       setState(() {
         detailPost!.isFavorited = true;
       });
-      
-      await FetchApi.post(baseApiUrl + "/forum/favorites/" + detailPost!.postId.toString(), null);
-    }
 
+      await FetchApi.post(
+          baseApiUrl + "/forum/favorites/" + detailPost!.postId.toString(),
+          null);
+    }
   }
 
   @override
@@ -232,6 +244,122 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                       onTap: () {},
                     ),
                     const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 15.0,
+                        left: 10.0,
+                      ),
+                      child: comments.isNotEmpty
+                          ? Text('${comments.length} comments')
+                          : const Text('No comments'),
+                    ),
+                    Column(
+                      children: [
+                        ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: comments.length,
+                          primary: false,
+                          itemBuilder: (context, i) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 16.0, top: 10.0),
+                              child: SizedBox(
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      children: [
+                                        CircleImage(
+                                          width: 32,
+                                          height: 32,
+                                          image: Image.asset(
+                                                  'assets/images/avatar.jpg')
+                                              .image,
+                                        ),
+                                      ],
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                comments[i].user.username,
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(comments[i].content)
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16.0, top: 20.0),
+                      child: GestureDetector(
+                        child: Row(
+                          children: [
+                            CircleImage(
+                              width: 32,
+                              height: 32,
+                              image: Session.user!.base64Avatar != null
+                                  ? Image.memory(base64Decode(
+                                          Session.user!.base64Avatar!))
+                                      .image
+                                  : Image.asset('assets/images/avatar.jpg')
+                                      .image,
+                            ),
+                            const Padding(
+                              padding: EdgeInsets.only(left: 10.0),
+                              child: Text(
+                                'Add comment...',
+                                style: TextStyle(
+                                  color: kPrimaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return CreateCommentScreen(
+                                  postId: detailPost!.postId,
+                                );
+                              },
+                            ),
+                          ).whenComplete(() => refreshData());
+                        },
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 100,
+                    ),
                   ],
                 ),
               )

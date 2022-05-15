@@ -34,16 +34,19 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     final response = await FetchApi.get(
         baseApiUrl + "/forum/posts/" + widget.postId.toString());
     final body = jsonDecode(response.body);
+
     final responseImage = await FetchApi.get(
         baseApiUrl + "/forum/posts/" + widget.postId.toString() + "/image");
 
     final bodyImage = jsonDecode(responseImage.body);
 
-    setState(() {
-      detailPost = DetailPost.fromJson(body['data']);
-      base64Image = bodyImage['data'];
-      isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        detailPost = DetailPost.fromJson(body['data']);
+        base64Image = bodyImage['data'];
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -60,16 +63,26 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         actions: !isLoading
             ? detailPost!.user.userId == Session.user!.userId
                 ? [
-                    IconButton(onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return EditPostScreen(detailPost: detailPost!, base64Image: base64Image,);
-                          },
-                        ),
-                      );
-                    }, icon: Icon(Icons.edit)),
+                    IconButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) {
+                                return EditPostScreen(
+                                  detailPost: detailPost!,
+                                  base64Image: base64Image,
+                                );
+                              },
+                            ),
+                          ).whenComplete(() {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            getPost();
+                          });
+                        },
+                        icon: Icon(Icons.edit)),
                   ]
                 : []
             : [],
@@ -81,27 +94,29 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                 children: [
                   Text(detailPost!.title),
                   Text(detailPost!.description),
-                  base64Image != null ? GestureDetector(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 200,
-                      child: Image.memory(
-                        base64Decode(base64Image!),
-                        fit: BoxFit.fitHeight,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return PreviewImageScreen(
-                                base64Image: base64Image!);
+                  base64Image != null
+                      ? GestureDetector(
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 200,
+                            child: Image.memory(
+                              base64Decode(base64Image!),
+                              fit: BoxFit.fitHeight,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return PreviewImageScreen(
+                                      base64Image: base64Image!);
+                                },
+                              ),
+                            );
                           },
-                        ),
-                      );
-                    },
-                  ) : const Text(''),
+                        )
+                      : const Text(''),
                 ],
               ),
             )

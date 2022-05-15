@@ -7,6 +7,8 @@ import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:prorum_flutter/components/dialog_box.dart';
+import 'package:prorum_flutter/components/rounded_button.dart';
 import 'package:prorum_flutter/components/rounded_dropdown_button.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_multiline_input_field.dart';
@@ -14,7 +16,9 @@ import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/category.dart';
 import 'package:prorum_flutter/models/detail_post.dart';
+import 'package:prorum_flutter/screens/post/components/delete_button.dart';
 import 'package:prorum_flutter/screens/post/components/image_picker_button.dart';
+import 'package:prorum_flutter/session.dart';
 
 class EditPostScreen extends StatefulWidget {
   final DetailPost detailPost;
@@ -39,6 +43,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
   List<Category> categories = [];
   List<DropdownMenuItem<String>> items = [];
   bool isLoading = true;
+  bool canDelete = false;
 
   clearImage() {
     setState(() {
@@ -95,6 +100,15 @@ class _EditPostScreenState extends State<EditPostScreen> {
     titleController.text = title!;
     descriptionController.text = description!;
     categoryIdController.text = categoryId!;
+
+    DateTime now = DateTime.now().toUtc();
+    if (now.isBefore(widget.detailPost.deleteableBefore) &&
+        Session.user!.userId == widget.detailPost.user.userId) {
+      setState(() {
+        canDelete = true;
+      });
+    }
+
     if (widget.base64Image != null) {
       convertImageToFile();
     }
@@ -112,7 +126,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
     await file.writeAsBytes(base64Decode(widget.base64Image!));
     setState(() {
       image = file;
-      filename = 'post-${widget.detailPost.postId}.png';
+      filename = 'post-${widget.detailPost.postId}.jpg';
     });
   }
 
@@ -139,13 +153,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: const Text('Edit Post'),
-    //     backgroundColor: Colors.white,
-    //     foregroundColor: kPrimaryColor,
-    //   ),
-    // );
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -155,14 +162,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
           style: TextStyle(color: Colors.black),
         ),
         actions: [
-          TextButton(
+          IconButton(
             onPressed: submitPost,
-            child: const Text(
-              'Submit',
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
-            ),
+            icon: Icon(Icons.check),
           ),
         ],
       ),
@@ -247,6 +249,63 @@ class _EditPostScreenState extends State<EditPostScreen> {
                             });
                           },
                         ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 50.0, bottom: 0.0),
+                        child: canDelete
+                            ? DeleteButton(onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text(
+                                            'Are you sure want to delete this item?'),
+                                        content: const Text(
+                                            'This action cannot be undone'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () async {
+                                              final response = await FetchApi.delete(
+                                                  baseApiUrl +
+                                                      "/forum/posts/" +
+                                                      widget.detailPost.postId
+                                                          .toString(),
+                                                  null);
+                                              final body =
+                                                  jsonDecode(response.body);
+                                              Navigator.of(context).pop();
+                                              if (body['statusCode'] == 200) {
+                                                int count = 0;
+                                                Navigator.popUntil(
+                                                  context,
+                                                  (route) {
+                                                    count++;
+                                                    return count == 3;
+                                                  },
+                                                );
+                                              } else {
+                                                showDialog(context: context, builder: (BuildContext context){
+                                                  return DialogBox(content: Text(body['message']));
+                                                });
+                                              }
+                                            },
+                                            child: const Text(
+                                              'Delete',
+                                              style:
+                                                  TextStyle(color: Colors.red),
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    });
+                              })
+                            : Text(''),
                       ),
                     ],
                   ),

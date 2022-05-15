@@ -53,10 +53,29 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   }
 
   Future refreshData() async {
-    setState(() {
-      isLoading = true;
-    });
+    if(mounted){
+      setState(() {
+        isLoading = true;
+      });
+    }
     await getPost();
+  }
+
+  handleFavorite() async{
+    if(detailPost!.isFavorited){
+      setState(() {
+        detailPost!.isFavorited = false;
+      });
+      
+      await FetchApi.delete(baseApiUrl + "/forum/favorites/" + detailPost!.postId.toString(), null);
+    }else{
+      setState(() {
+        detailPost!.isFavorited = true;
+      });
+      
+      await FetchApi.post(baseApiUrl + "/forum/favorites/" + detailPost!.postId.toString(), null);
+    }
+
   }
 
   @override
@@ -92,7 +111,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                             getPost();
                           });
                         },
-                        icon: Icon(Icons.edit)),
+                        icon: const Icon(Icons.edit)),
                   ]
                 : []
             : [],
@@ -147,6 +166,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                       padding: EdgeInsets.only(
                         top: 15.0,
                         left: 10.0,
+                        right: 10.0,
                       ),
                       child: Text(
                         'Published on',
@@ -158,10 +178,36 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                     Padding(
                       padding: const EdgeInsets.only(
                         left: 10.0,
+                        right: 10.0,
                       ),
                       child: Text(DateFormat.yMMMMd('en_US')
                           .add_jm()
                           .format(detailPost!.createdAt.toLocal())),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 15.0, left: 10.0, right: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Favorite',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(
+                            onPressed: handleFavorite,
+                            icon: detailPost!.isFavorited
+                                ? const Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  )
+                                : const Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.red,
+                                  ),
+                          )
+                        ],
+                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(
@@ -185,7 +231,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                       trailing: const Icon(Icons.arrow_forward_ios),
                       onTap: () {},
                     ),
-                    const Divider(),                    
+                    const Divider(),
                   ],
                 ),
               )

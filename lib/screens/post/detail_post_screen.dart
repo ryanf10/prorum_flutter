@@ -29,6 +29,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
   DetailPost? detailPost;
   String? base64Image;
   List<Comment> comments = [];
+  Map<int, String> avatar = <int, String>{};
 
   @override
   void initState() {
@@ -40,10 +41,21 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     final response = await FetchApi.get(
         baseApiUrl + "/forum/posts/" + widget.postId.toString());
     final body = jsonDecode(response.body);
-    print(body);
+
     List<Comment> tempComment = [];
+    Map<int, String> tempAvatar = <int, String>{};
+    tempAvatar[Session.user!.userId] = Session.user!.base64Avatar ?? '';
     for (int i = 0; i < body['data']['comments'].length; i++) {
-      tempComment.add(Comment.fromJson(body['data']['comments'][i]));
+      Comment comment = Comment.fromJson(body['data']['comments'][i]);
+      tempComment.add(comment);
+
+      if (!tempAvatar.containsKey(comment.user.userId)){
+        if(comment.user.userId != Session.user!.userId){
+          final tempResAvatar = await FetchApi.get(baseApiUrl + '/users/avatar/${comment.user.userId}');
+          final String? tempBase64Avatar = jsonDecode(tempResAvatar.body)['data'];
+          tempAvatar[comment.user.userId] = tempBase64Avatar ?? '';
+        }
+      } 
     }
 
     final responseImage = await FetchApi.get(
@@ -56,6 +68,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
         detailPost = DetailPost.fromJson(body['data']);
         base64Image = bodyImage['data'];
         comments = tempComment;
+        avatar = tempAvatar;
         isLoading = false;
       });
     }
@@ -273,7 +286,9 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                         CircleImage(
                                           width: 32,
                                           height: 32,
-                                          image: Image.asset(
+                                          image: avatar[comments[i].user.userId] != '' ? 
+                                          Image.memory(base64Decode(avatar[comments[i].user.userId]!)).image :
+                                          Image.asset(
                                                   'assets/images/avatar.jpg')
                                               .image,
                                         ),

@@ -6,6 +6,7 @@ import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
 import 'package:prorum_flutter/screens/home/components/rounded_toogle_button.dart';
+import 'package:prorum_flutter/screens/post/components/list_posts.dart';
 import 'package:prorum_flutter/screens/post/detail_post_screen.dart';
 
 class FeedTab extends StatefulWidget {
@@ -29,14 +30,16 @@ class _FeedTabState extends State<FeedTab> {
   @override
   void initState() {
     super.initState();
+    print('aaa');
     getPosts();
   }
 
   Future getPosts() async {
-    final responseAll = await FetchApi.get(baseApiUrl + '/forum/posts?sortBy=time&dir=desc');
+    final responseAll =
+        await FetchApi.get(baseApiUrl + '/forum/posts?sortBy=time&dir=desc');
 
     final bodyAll = jsonDecode(responseAll.body);
-    
+
     if (bodyAll['statusCode'] == 200) {
       for (int i = 0; i < bodyAll['data'].length; i++) {
         duplicateAllPosts.add(Post.fromJson(bodyAll['data'][i]));
@@ -121,7 +124,7 @@ class _FeedTabState extends State<FeedTab> {
       color: kPrimaryColor,
       child: !isLoading
           ? Column(
-              children: [                
+              children: [
                 RoundedRectangleInputField(
                   hintText: "search",
                   onChanged: searchItem,
@@ -147,42 +150,16 @@ class _FeedTabState extends State<FeedTab> {
                     updateListData();
                   },
                 ),
-                Expanded(
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: posts.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Card(
-                        child: ListTile(
-                          title: Text(
-                            posts[index].title,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          subtitle: Text(posts[index].category.name),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return DetailPostScreen(postId: posts[index].postId);
-                                },
-                              ),
-                            ).whenComplete(() {
-                              refreshData();
-                              setState(() {
-                                controllerSearch.text = query ?? '';
-                              });
-                              updateListData();
-                            });
-                          },
-                          trailing: const Icon(Icons.arrow_forward_ios),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                ListPosts(
+                  posts: posts,
+                  whenComplete: () {
+                    refreshData();
+                    setState(() {
+                      controllerSearch.text = query ?? '';
+                    });
+                    updateListData();
+                  },
+                ),                
               ],
             )
           : const Center(

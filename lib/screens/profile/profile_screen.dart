@@ -59,7 +59,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     Session.user!.base64Avatar = tempBase64;
   }
 
-  setAvatar(File avatar) async {
+  removeAvatar() async {
+    Navigator.pop(this.context);
+    await setAvatar(null);
+    setState(() {
+      base64Image = '';
+    });
+    Session.user!.base64Avatar = null;
+  }
+
+  setAvatar(File? avatar) async {
     var request = http.MultipartRequest(
         'PATCH', Uri.parse(baseApiUrl + '/users/change-avatar'));
     request.headers.addAll(FetchApi.headers);
@@ -147,6 +156,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 style: TextButton.styleFrom(
                                     alignment: Alignment.topLeft),
                               ),
+                              base64Image != '' ?TextButton.icon(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.black,
+                                ),
+                                label: const Text(
+                                  'Remove Profile Picture',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                onPressed: removeAvatar,
+                                style: TextButton.styleFrom(
+                                    alignment: Alignment.topLeft),
+                              ) : const Text(''),
                             ],
                           ),
                         ),

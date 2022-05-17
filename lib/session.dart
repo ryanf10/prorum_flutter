@@ -21,19 +21,16 @@ class Session {
 
   static getUser() async {
     final response = await FetchApi.get(baseApiUrl + '/users/me');
-    Map<String, dynamic> body = jsonDecode(response.body);
+    final responseForAvatar =
+        await FetchApi.get(baseApiUrl + '/users/me/avatar');
 
-    if (body['statusCode'] == 200) {
+    Map<String, dynamic> body = jsonDecode(response.body);
+    Map<String, dynamic> bodyForAvatar = jsonDecode(responseForAvatar.body);
+
+    if (body['statusCode'] == 200 && bodyForAvatar['statusCode'] == 200) {
       Session.isLoggedin = true;
       Session.user = User.fromJson(body['data']['user']);
-
-      final responseForAvatar =
-          await FetchApi.get(baseApiUrl + '/users/me/avatar');
-      Map<String, dynamic> bodyForAvatar = jsonDecode(responseForAvatar.body);
-
-      if(bodyForAvatar['statusCode'] == 200){
-        Session.user!.base64Avatar = bodyForAvatar['data'];
-      }
+      Session.user!.base64Avatar = bodyForAvatar['data'];
     }
   }
 

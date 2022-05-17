@@ -114,7 +114,7 @@ class _BodyState extends State<Body> {
                           msg = "Success";
                           success = true;
                           Session.saveCookie(response);
-                          Session.getUser();
+                          await Session.getUser();
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

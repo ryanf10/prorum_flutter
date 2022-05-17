@@ -45,17 +45,22 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     List<Comment> tempComment = [];
     Map<int, String> tempAvatar = <int, String>{};
     tempAvatar[Session.user!.userId] = Session.user!.base64Avatar ?? '';
+    if(body['statusCode'] != 200){
+      return;
+    }
     for (int i = 0; i < body['data']['comments'].length; i++) {
       Comment comment = Comment.fromJson(body['data']['comments'][i]);
       tempComment.add(comment);
 
-      if (!tempAvatar.containsKey(comment.user.userId)){
-        if(comment.user.userId != Session.user!.userId){
-          final tempResAvatar = await FetchApi.get(baseApiUrl + '/users/avatar/${comment.user.userId}');
-          final String? tempBase64Avatar = jsonDecode(tempResAvatar.body)['data'];
+      if (!tempAvatar.containsKey(comment.user.userId)) {
+        if (comment.user.userId != Session.user!.userId) {
+          final tempResAvatar = await FetchApi.get(
+              baseApiUrl + '/users/avatar/${comment.user.userId}');
+          final String? tempBase64Avatar =
+              jsonDecode(tempResAvatar.body)['data'];
           tempAvatar[comment.user.userId] = tempBase64Avatar ?? '';
         }
-      } 
+      }
     }
 
     final responseImage = await FetchApi.get(
@@ -130,10 +135,12 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                               },
                             ),
                           ).whenComplete(() {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            getPost();
+                            if (mounted) {
+                              setState(() {
+                                isLoading = true;
+                              });
+                              getPost();
+                            }
                           });
                         },
                         icon: const Icon(Icons.edit)),
@@ -286,11 +293,18 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                         CircleImage(
                                           width: 32,
                                           height: 32,
-                                          image: avatar[comments[i].user.userId] != '' ? 
-                                          Image.memory(base64Decode(avatar[comments[i].user.userId]!)).image :
-                                          Image.asset(
-                                                  'assets/images/avatar.jpg')
-                                              .image,
+                                          image: avatar[comments[i]
+                                                      .user
+                                                      .userId] !=
+                                                  ''
+                                              ? Image.memory(base64Decode(
+                                                      avatar[comments[i]
+                                                          .user
+                                                          .userId]!))
+                                                  .image
+                                              : Image.asset(
+                                                      'assets/images/avatar.jpg')
+                                                  .image,
                                         ),
                                       ],
                                     ),

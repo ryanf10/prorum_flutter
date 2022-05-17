@@ -55,9 +55,6 @@ class _EditPostScreenState extends State<EditPostScreen> {
     final selectedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (selectedImage == null) {
-      setState(() {
-        image = null;
-      });
       return;
     }
 

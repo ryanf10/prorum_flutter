@@ -39,9 +39,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final selectedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (selectedImage == null) {
-      setState(() {
-        image = null;
-      });
       return;
     }
 

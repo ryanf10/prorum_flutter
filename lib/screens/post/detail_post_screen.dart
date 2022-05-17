@@ -10,7 +10,9 @@ import 'package:prorum_flutter/models/comment.dart';
 import 'package:prorum_flutter/models/detail_post.dart';
 import 'package:prorum_flutter/screens/post/create_comment_screen.dart';
 import 'package:prorum_flutter/screens/post/edit_post_screen.dart';
+import 'package:prorum_flutter/screens/post/post_by_user_screen.dart';
 import 'package:prorum_flutter/screens/post/preview_image_screen.dart';
+import 'package:prorum_flutter/screens/profile/profile_screen.dart';
 import 'package:prorum_flutter/session.dart';
 
 class DetailPostScreen extends StatefulWidget {
@@ -45,7 +47,7 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     List<Comment> tempComment = [];
     Map<int, String> tempAvatar = <int, String>{};
     tempAvatar[Session.user!.userId] = Session.user!.base64Avatar ?? '';
-    if(body['statusCode'] != 200){
+    if (body['statusCode'] != 200) {
       return;
     }
     for (int i = 0; i < body['data']['comments'].length; i++) {
@@ -290,21 +292,37 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                   children: [
                                     Column(
                                       children: [
-                                        CircleImage(
-                                          width: 32,
-                                          height: 32,
-                                          image: avatar[comments[i]
-                                                      .user
-                                                      .userId] !=
-                                                  ''
-                                              ? Image.memory(base64Decode(
-                                                      avatar[comments[i]
-                                                          .user
-                                                          .userId]!))
-                                                  .image
-                                              : Image.asset(
-                                                      'assets/images/avatar.jpg')
-                                                  .image,
+                                        GestureDetector(
+                                          child: CircleImage(
+                                            width: 32,
+                                            height: 32,
+                                            image: avatar[comments[i]
+                                                        .user
+                                                        .userId] !=
+                                                    ''
+                                                ? Image.memory(base64Decode(
+                                                        avatar[comments[i]
+                                                            .user
+                                                            .userId]!))
+                                                    .image
+                                                : Image.asset(
+                                                        'assets/images/avatar.jpg')
+                                                    .image,
+                                          ),
+                                          onTap: () {
+                                            if (Session.user!.userId ==
+                                                comments[i].user.userId) {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return const ProfileScreen();
+                                                  },
+                                                ),
+                                              );
+                                            }
+                                          },
                                         ),
                                       ],
                                     ),

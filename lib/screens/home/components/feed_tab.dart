@@ -23,14 +23,13 @@ class _FeedTabState extends State<FeedTab> {
   List<Post> duplicateActivePosts = [];
   List<Post> duplicateAllPosts = [];
   List<Post> duplicateFavoritesPosts = [];
-  List<bool> isSelected = [true, false];
+
   String? query;
   TextEditingController controllerSearch = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    print('aaa');
     getPosts();
   }
 

@@ -44,6 +44,9 @@ class _EditPostScreenState extends State<EditPostScreen> {
   List<DropdownMenuItem<String>> items = [];
   bool isLoading = true;
   bool canDelete = false;
+  bool isErrorTitle = false;
+  bool isErrorDescription = false;
+  bool isSubmitted = false;
 
   clearImage() {
     setState(() {
@@ -64,32 +67,58 @@ class _EditPostScreenState extends State<EditPostScreen> {
     });
   }
 
-  submitPost() async {
-    var request = http.MultipartRequest(
-        'PATCH',
-        Uri.parse(baseApiUrl +
-            '/forum/posts/' +
-            widget.detailPost.postId.toString()));
-    request.headers.addAll(FetchApi.headers);
-    request.fields['title'] = title!;
-    request.fields['description'] = description!;
-    request.fields['category_id'] = categoryId!;
+  updatePost() async {
+    if (title == '' || title == null) {
+      setState(() {
+        isErrorTitle = true;
+      });
 
-    if (image != null) {
-      request.files.add(http.MultipartFile.fromBytes(
-        'image',
-        await image!.readAsBytes(),
-        filename: filename,
-      ));
+      showDialog(
+        context: this.context,
+        builder: (context) {
+          return const DialogBox(content: Text('Title cannot be empty'));
+        },
+      );
+    } else if (description == '' || description == null) {
+      setState(() {
+        isErrorDescription = true;
+      });
+
+      showDialog(
+        context: this.context,
+        builder: (context) {
+          return const DialogBox(content: Text('Description cannot be empty'));
+        },
+      );
+    } else if (!isSubmitted) {
+      setState(() {
+        isSubmitted = true;
+      });
+      var request = http.MultipartRequest(
+          'PATCH',
+          Uri.parse(baseApiUrl +
+              '/forum/posts/' +
+              widget.detailPost.postId.toString()));
+      request.headers.addAll(FetchApi.headers);
+      request.fields['title'] = title!;
+      request.fields['description'] = description!;
+      request.fields['category_id'] = categoryId!;
+
+      if (image != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          await image!.readAsBytes(),
+          filename: filename,
+        ));
+      }
+
+      var res = await request.send();
+      Navigator.pop(this.context);
     }
-
-    var res = await request.send();
-    Navigator.pop(this.context);
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     title = widget.detailPost.title;
     description = widget.detailPost.description;
@@ -160,7 +189,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         ),
         actions: [
           IconButton(
-            onPressed: submitPost,
+            onPressed: updatePost,
             icon: Icon(Icons.check),
           ),
         ],
@@ -183,9 +212,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 0.0),
                         child: RoundedRectangleInputField(
+                          isError: isErrorTitle,
                           hintText: "",
                           onChanged: (value) {
                             setState(() {
+                              isErrorTitle = value == '' ? true : false;
                               title = value;
                             });
                           },
@@ -203,9 +234,11 @@ class _EditPostScreenState extends State<EditPostScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 0.0),
                         child: RoundedRectangleMultilineInputField(
+                          isError: isErrorDescription,
                           hintText: "",
                           onChanged: (value) {
                             setState(() {
+                              isErrorDescription = value == '' ? true : false;
                               description = value;
                             });
                           },
@@ -268,12 +301,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                           ),
                                           TextButton(
                                             onPressed: () async {
-                                              final response = await FetchApi.delete(
-                                                  baseApiUrl +
-                                                      "/forum/posts/" +
-                                                      widget.detailPost.postId
-                                                          .toString(),
-                                                  null);
+                                              final response =
+                                                  await FetchApi.delete(
+                                                      baseApiUrl +
+                                                          "/forum/posts/" +
+                                                          widget
+                                                              .detailPost.postId
+                                                              .toString(),
+                                                      null);
                                               final body =
                                                   jsonDecode(response.body);
                                               Navigator.of(context).pop();
@@ -287,9 +322,14 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                                   },
                                                 );
                                               } else {
-                                                showDialog(context: context, builder: (BuildContext context){
-                                                  return DialogBox(content: Text(body['message']));
-                                                });
+                                                showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return DialogBox(
+                                                          content: Text(
+                                                              body['message']));
+                                                    });
                                               }
                                             },
                                             child: const Text(
@@ -302,7 +342,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                                       );
                                     });
                               })
-                            : Text(''),
+                            : const Text(''),
                       ),
                     ],
                   ),

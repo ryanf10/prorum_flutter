@@ -130,6 +130,7 @@ class _FeedTabState extends State<FeedTab> {
                   onChanged: searchItem,
                   icon: Icons.search,
                   controller: controllerSearch,
+                  isError: false,
                 ),
                 RoundedToogleButton(
                   selected: selectedIndex,

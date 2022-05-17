@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:prorum_flutter/components/dialog_box.dart';
 import 'package:prorum_flutter/components/rounded_dropdown_button.dart';
 import 'package:prorum_flutter/screens/post/components/image_picker_button.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
@@ -15,7 +16,11 @@ import 'package:prorum_flutter/models/category.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CreatePostScreen extends StatefulWidget {
-  const CreatePostScreen({Key? key}) : super(key: key);
+  final int? defaultCategory;
+  const CreatePostScreen({
+    Key? key,
+    this.defaultCategory,
+  }) : super(key: key);
 
   @override
   State<CreatePostScreen> createState() => _CreatePostScreenState();
@@ -28,6 +33,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   List<Category> categories = [];
   List<DropdownMenuItem<String>> items = [];
   bool isLoading = true;
+  bool isErrorTitle = false;
+  bool isErrorDescription = false;
+  bool isSubmitted = false;
 
   clearImage() {
     setState(() {
@@ -49,23 +57,50 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   submitPost() async {
-    var request = http.MultipartRequest(
-        'POST', Uri.parse(baseApiUrl + '/forum/posts'));
-    request.headers.addAll(FetchApi.headers);
-    request.fields['title'] = title!;
-    request.fields['description'] = description!;
-    request.fields['category_id'] = categoryId!;
+    if (title == '' || title == null) {
+      setState(() {
+        isErrorTitle = true;
+      });
 
-    if (image != null) {
-      request.files.add(http.MultipartFile.fromBytes(
-        'image',
-        await image!.readAsBytes(),
-        filename: filename,
-      ));
+      showDialog(
+        context: this.context,
+        builder: (context) {
+          return const DialogBox(content: Text('Title cannot be empty'));
+        },
+      );
+    } else if (description == '' || description == null) {
+      setState(() {
+        isErrorDescription = true;
+      });
+
+      showDialog(
+        context: this.context,
+        builder: (context) {
+          return const DialogBox(content: Text('Description cannot be empty'));
+        },
+      );
+    } else if(!isSubmitted){
+      setState(() {
+        isSubmitted = true;
+      });
+      var request =
+          http.MultipartRequest('POST', Uri.parse(baseApiUrl + '/forum/posts'));
+      request.headers.addAll(FetchApi.headers);
+      request.fields['title'] = title!;
+      request.fields['description'] = description!;
+      request.fields['category_id'] = categoryId!;
+
+      if (image != null) {
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          await image!.readAsBytes(),
+          filename: filename,
+        ));
+      }
+
+      var res = await request.send();
+      Navigator.pop(this.context);
     }
-
-    var res = await request.send();
-    Navigator.pop(this.context);
   }
 
   @override
@@ -84,7 +119,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       temp.add(Category.fromJson(body['data'][i]));
     }
 
+    int? tempDefaultCategory = widget.defaultCategory;
     tempDropDown = temp.map<DropdownMenuItem<String>>((Category item) {
+      tempDefaultCategory ??= item.categoryId;
       return DropdownMenuItem<String>(
           value: item.categoryId.toString(), child: Text(item.name));
     }).toList();
@@ -92,6 +129,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       categories = temp;
       items = tempDropDown;
       isLoading = false;
+      categoryId = tempDefaultCategory.toString();
     });
   }
 
@@ -136,9 +174,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 0.0),
                         child: RoundedRectangleInputField(
+                          isError: isErrorTitle,
                           hintText: "",
                           onChanged: (value) {
                             setState(() {
+                              isErrorTitle = value == '' ? true : false;
                               title = value;
                             });
                           },
@@ -156,9 +196,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 0.0),
                         child: RoundedRectangleMultilineInputField(
+                          isError: isErrorDescription,
                           hintText: "",
                           onChanged: (value) {
                             setState(() {
+                              isErrorDescription = value == '' ? true : false;
                               description = value;
                             });
                           },

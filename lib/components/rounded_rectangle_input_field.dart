@@ -6,6 +6,7 @@ class RoundedRectangleInputField extends StatelessWidget {
   final Function(String) onChanged;
   final IconData? icon;
   final TextEditingController? controller;
+  final bool isError;
 
   const RoundedRectangleInputField({
     Key? key,
@@ -13,6 +14,7 @@ class RoundedRectangleInputField extends StatelessWidget {
     required this.onChanged,
     required this.icon,
     required this.controller,
+    required this.isError,
   }) : super(key: key);
 
   @override
@@ -23,9 +25,12 @@ class RoundedRectangleInputField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
       width: size.width * 0.95,
       decoration: BoxDecoration(
-          color: Colors.grey[200]!,
-          borderRadius: BorderRadius.circular(10.0),
-          border: Border.all(width: 1.0, color: Colors.grey[400]!)),
+        color: Colors.grey[200]!,
+        borderRadius: BorderRadius.circular(10.0),
+        border: isError
+            ? Border.all(width: 1.0, color: Colors.red)
+            : Border.all(width: 1.0, color: Colors.grey[400]!),
+      ),
       child: TextField(
         controller: controller,
         decoration: InputDecoration(

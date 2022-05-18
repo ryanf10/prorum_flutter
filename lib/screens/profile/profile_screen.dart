@@ -5,11 +5,11 @@ import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:prorum_flutter/components/circle_image.dart';
-import 'package:prorum_flutter/components/dialog_box.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
-import 'package:prorum_flutter/screens/post/post_by_user_screen.dart';
-import 'package:prorum_flutter/screens/welcome/welcome_screen.dart';
+import 'package:prorum_flutter/models/user.dart';
+import 'package:prorum_flutter/screens/profile/components/post_count_card.dart';
+import 'package:prorum_flutter/screens/profile/components/sign_out_button.dart';
 import 'package:prorum_flutter/session.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,6 +24,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String base64Image = '';
   int postCount = 0;
   bool isLoading = true;
+  User? user;
 
   Future imagePickerFromGallery() async {
     Navigator.pop(this.context);
@@ -95,6 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (body['statusCode'] == 200) {
       setState(() {
+        user = User.fromJson(body['data']['user']);
         postCount = int.parse(body['data']['user']['posts_count']);
         isLoading = false;
       });
@@ -203,57 +205,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 10.0),
-                    child: Card(
-                      child: ListTile(
-                        title: const Text('My Posts'),
-                        subtitle: postCount > 1
-                            ? Text('$postCount posts')
-                            : Text('$postCount post'),
-                        trailing: const Icon(Icons.arrow_forward_ios),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) {
-                                return PostByUserScreen(userId: Session.user!.userId, title: "My Posts",);
-                              },
-                            ),
-                          );
-                        },
+                    child: Text(
+                      user!.username,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 15.0),
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                primary: Color(0xFFDFF5F5),
-                                onPrimary: kPrimaryColor,
-                                elevation: 0),
-                            child: const Text('SIGN OUT'),
-                            onPressed: () {
-                              Session.destroyAll();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (BuildContext context) {
-                                    return const WelcomeScreen();
-                                  },
-                                ),
-                                (route) => false,
-                              );
-                            },
-                          ),
-                        ],
+                    padding: const EdgeInsets.only(top: 5.0),
+                    child: Text(
+                      user!.email!,
+                      style: const TextStyle(
                       ),
                     ),
-                  )
+                  ),
+                  PostCountCard(
+                    postCount: postCount,
+                    title: "My Posts",
+                    userId: Session.user!.userId,
+                  ),
+                  const SignOutButton(),
                 ],
               ),
             )

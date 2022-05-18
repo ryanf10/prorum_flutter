@@ -13,6 +13,7 @@ import 'package:prorum_flutter/screens/post/edit_post_screen.dart';
 import 'package:prorum_flutter/screens/post/post_by_user_screen.dart';
 import 'package:prorum_flutter/screens/post/preview_image_screen.dart';
 import 'package:prorum_flutter/screens/profile/profile_screen.dart';
+import 'package:prorum_flutter/screens/profile/user_info_screen.dart';
 import 'package:prorum_flutter/session.dart';
 
 class DetailPostScreen extends StatefulWidget {
@@ -47,6 +48,14 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     List<Comment> tempComment = [];
     Map<int, String> tempAvatar = <int, String>{};
     tempAvatar[Session.user!.userId] = Session.user!.base64Avatar ?? '';
+
+    if (body['data']['user']['id'] != Session.user!.userId) {
+      final tempResAvatar = await FetchApi.get(
+          baseApiUrl + '/users/avatar/${body['data']['user']['id']}');
+      final String? tempBase64Avatar = jsonDecode(tempResAvatar.body)['data'];
+      tempAvatar[body['data']['user']['id']] = tempBase64Avatar ?? '';
+    }
+
     if (body['statusCode'] != 200) {
       return;
     }
@@ -259,11 +268,25 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                       leading: CircleImage(
                         width: 36,
                         height: 36,
-                        image: Image.asset('assets/images/avatar.jpg').image,
+                        image: avatar[detailPost!.user.userId] != ''
+                            ? Image.memory(base64Decode(
+                                    avatar[detailPost!.user.userId]!))
+                                .image
+                            : Image.asset('assets/images/avatar.jpg').image,
                       ),
                       title: Text(detailPost!.user.username),
                       trailing: const Icon(Icons.arrow_forward_ios),
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return UserInfoScreen(
+                                  userId: detailPost!.user.userId);
+                            },
+                          ),
+                        );
+                      },
                     ),
                     const Divider(),
                     Padding(
@@ -310,18 +333,18 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                                     .image,
                                           ),
                                           onTap: () {
-                                            if (Session.user!.userId ==
-                                                comments[i].user.userId) {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return const ProfileScreen();
-                                                  },
-                                                ),
-                                              );
-                                            }
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return UserInfoScreen(
+                                                    userId:
+                                                        comments[i].user.userId,
+                                                  );
+                                                },
+                                              ),
+                                            );
                                           },
                                         ),
                                       ],

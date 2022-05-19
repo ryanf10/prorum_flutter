@@ -7,7 +7,6 @@ import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
 import 'package:prorum_flutter/screens/home/components/rounded_toogle_button.dart';
 import 'package:prorum_flutter/screens/post/components/list_posts.dart';
-import 'package:prorum_flutter/screens/post/detail_post_screen.dart';
 
 class FeedTab extends StatefulWidget {
   const FeedTab({Key? key}) : super(key: key);

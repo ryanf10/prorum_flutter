@@ -10,6 +10,6 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return currentTabIndex == 0 ? Text('Category') : FeedTab();
+    return currentTabIndex == 0 ? const Text('Category') : const FeedTab();
   }
 }

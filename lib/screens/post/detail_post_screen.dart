@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/gestures.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/components/circle_image.dart';
@@ -10,9 +9,7 @@ import 'package:prorum_flutter/models/comment.dart';
 import 'package:prorum_flutter/models/detail_post.dart';
 import 'package:prorum_flutter/screens/post/create_comment_screen.dart';
 import 'package:prorum_flutter/screens/post/edit_post_screen.dart';
-import 'package:prorum_flutter/screens/post/post_by_user_screen.dart';
 import 'package:prorum_flutter/screens/post/preview_image_screen.dart';
-import 'package:prorum_flutter/screens/profile/profile_screen.dart';
 import 'package:prorum_flutter/screens/profile/user_info_screen.dart';
 import 'package:prorum_flutter/session.dart';
 
@@ -49,6 +46,10 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
     Map<int, String> tempAvatar = <int, String>{};
     tempAvatar[Session.user!.userId] = Session.user!.base64Avatar ?? '';
 
+    if (body['statusCode'] != 200) {
+      return;
+    }
+
     if (body['data']['user']['id'] != Session.user!.userId) {
       final tempResAvatar = await FetchApi.get(
           baseApiUrl + '/users/avatar/${body['data']['user']['id']}');
@@ -56,9 +57,6 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
       tempAvatar[body['data']['user']['id']] = tempBase64Avatar ?? '';
     }
 
-    if (body['statusCode'] != 200) {
-      return;
-    }
     for (int i = 0; i < body['data']['comments'].length; i++) {
       Comment comment = Comment.fromJson(body['data']['comments'][i]);
       tempComment.add(comment);

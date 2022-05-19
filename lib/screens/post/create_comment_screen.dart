@@ -35,7 +35,6 @@ class _CreateCommentScreenState extends State<CreateCommentScreen> {
       );
 
       final body = jsonDecode(response.body);
-      print(body);
 
       if (body['statusCode'] == 201) {
         Navigator.pop(context);

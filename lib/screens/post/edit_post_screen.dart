@@ -8,7 +8,6 @@ import 'package:path/path.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:prorum_flutter/components/dialog_box.dart';
-import 'package:prorum_flutter/components/rounded_button.dart';
 import 'package:prorum_flutter/components/rounded_dropdown_button.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_input_field.dart';
 import 'package:prorum_flutter/components/rounded_rectangle_multiline_input_field.dart';
@@ -112,7 +111,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         ));
       }
 
-      var res = await request.send();
+      await request.send();
       Navigator.pop(this.context);
     }
   }
@@ -142,13 +141,13 @@ class _EditPostScreenState extends State<EditPostScreen> {
   }
 
   Future convertImageToFile() async {
-    var rng = new Random();
+    var rng = Random();
 
     Directory tempDir = await getTemporaryDirectory();
 
     String tempPath = tempDir.path;
 
-    File file = new File('$tempPath' + (rng.nextInt(100)).toString());
+    File file = File(tempPath + (rng.nextInt(100)).toString());
     await file.writeAsBytes(base64Decode(widget.base64Image!));
     setState(() {
       image = file;
@@ -190,7 +189,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
         actions: [
           IconButton(
             onPressed: updatePost,
-            icon: Icon(Icons.check),
+            icon: const Icon(Icons.check),
           ),
         ],
       ),
@@ -281,7 +280,7 @@ class _EditPostScreenState extends State<EditPostScreen> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(top: 50.0, bottom: 0.0),
+                        padding: const EdgeInsets.only(top: 50.0, bottom: 0.0),
                         child: canDelete
                             ? DeleteButton(onPressed: () {
                                 showDialog(

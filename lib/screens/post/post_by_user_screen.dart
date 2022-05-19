@@ -10,7 +10,7 @@ import 'package:prorum_flutter/screens/post/components/list_posts.dart';
 class PostByUserScreen extends StatefulWidget {
   final int userId;
   final String title;
-  PostByUserScreen({
+  const PostByUserScreen({
     Key? key,
     required this.userId,
     required this.title,

@@ -6,7 +6,7 @@ import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/user.dart';
 import 'package:prorum_flutter/screens/profile/components/post_count_card.dart';
-import 'package:prorum_flutter/screens/profile/components/sign_out_button.dart';
+
 
 class UserInfoScreen extends StatefulWidget {
   final int userId;
@@ -40,7 +40,6 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
         base64Image = bodyAvatar['data'] ?? '';
         isLoading = false;
       });
-      print(base64Image);
     }
   }
 

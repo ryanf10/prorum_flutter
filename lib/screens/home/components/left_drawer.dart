@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/components/circle_image.dart';
-import 'package:prorum_flutter/components/dialog_box.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/screens/profile/profile_screen.dart';
 import 'package:prorum_flutter/screens/welcome/welcome_screen.dart';

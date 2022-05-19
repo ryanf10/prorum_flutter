@@ -30,9 +30,9 @@ class RoundedToogleButton extends StatelessWidget {
           children: [
             AnimatedAlign(
               alignment: Alignment(selected, 0),
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               child: Padding(
-                padding: EdgeInsets.all(3.0),
+                padding: const EdgeInsets.all(3.0),
                 child: Container(
                   width: width * 0.5,
                   height: height,
@@ -46,7 +46,7 @@ class RoundedToogleButton extends StatelessWidget {
             GestureDetector(
               onTap: onTapAll,
               child: Align(
-                alignment: Alignment(-1, 0),
+                alignment: const Alignment(-1, 0),
                 child: Container(
                   width: width * 0.5,
                   color: Colors.transparent,
@@ -64,7 +64,7 @@ class RoundedToogleButton extends StatelessWidget {
             GestureDetector(
               onTap: onTapFavorites,
               child: Align(
-                alignment: Alignment(1, 0),
+                alignment: const Alignment(1, 0),
                 child: Container(
                   width: width * 0.5,
                   color: Colors.transparent,

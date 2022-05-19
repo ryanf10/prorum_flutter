@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ));
     }
 
-    var res = await request.send();
+    await request.send();
   }
 
   getInfo() async {

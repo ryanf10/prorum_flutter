@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/screens/post/post_by_user_screen.dart';
-import 'package:prorum_flutter/session.dart';
 
 class PostCountCard extends StatelessWidget {
   final String title;

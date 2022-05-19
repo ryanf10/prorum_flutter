@@ -1,13 +1,10 @@
 class Category{
   final int categoryId;
   final String name;
-  String? base64Image;
 
-
-  Category({
+  const Category({
     required this.categoryId,
     required this.name,
-    this.base64Image,
   });
 
   factory Category.fromJson(Map<String, dynamic> json) {

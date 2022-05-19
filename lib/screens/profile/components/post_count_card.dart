@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:prorum_flutter/screens/post/post_by_user_screen.dart';
+import 'package:prorum_flutter/constant.dart';
+import 'package:prorum_flutter/screens/post/posts_screen.dart';
 
 class PostCountCard extends StatelessWidget {
   final String title;
@@ -28,8 +29,8 @@ class PostCountCard extends StatelessWidget {
               context,
               MaterialPageRoute(
                 builder: (BuildContext context) {
-                  return PostByUserScreen(
-                    userId: userId,
+                  return PostsScreen(
+                    url: baseApiUrl + '/forum/posts/user/$userId',
                     title: title,
                   );
                 },

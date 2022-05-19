@@ -7,30 +7,29 @@ import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
 import 'package:prorum_flutter/screens/post/components/list_posts.dart';
 
-class PostByUserScreen extends StatefulWidget {
-  final int userId;
+class PostsScreen extends StatefulWidget {
+  final String url;
   final String title;
-  const PostByUserScreen({
+  const PostsScreen({
     Key? key,
-    required this.userId,
+    required this.url,
     required this.title,
   }) : super(key: key);
 
   @override
-  State<PostByUserScreen> createState() => _PostByUserScreenState();
+  State<PostsScreen> createState() => _PostsScreenState();
 }
 
-class _PostByUserScreenState extends State<PostByUserScreen> {
+class _PostsScreenState extends State<PostsScreen> {
   List<Post> posts = [];
   List<Post> duplicateAllPosts = [];
   bool isLoading = true;
 
   Future getPosts() async {
     final responseAll =
-        await FetchApi.get(baseApiUrl + '/forum/posts/user/${widget.userId}');
+        await FetchApi.get(widget.url);
 
     final bodyAll = jsonDecode(responseAll.body);
-    print(bodyAll);
 
     if (bodyAll['statusCode'] == 200) {
       for (int i = 0; i < bodyAll['data'].length; i++) {
@@ -38,7 +37,6 @@ class _PostByUserScreenState extends State<PostByUserScreen> {
       }
     }
 
-    print(duplicateAllPosts);
 
     setState(() {
       posts = duplicateAllPosts;
@@ -98,7 +96,13 @@ class _PostByUserScreenState extends State<PostByUserScreen> {
                 ),
                 ListPosts(
                   posts: posts,
-                  whenComplete: () {},
+                  whenComplete: () async{
+                    setState(() {
+                      isLoading = true;
+                      posts = [];
+                    });
+                    await getPosts();
+                  },
                 ),
               ],
             )

@@ -23,6 +23,9 @@ class _FeedTabState extends State<FeedTab> {
   List<Post> duplicateAllPosts = [];
   List<Post> duplicateFavoritesPosts = [];
 
+  int stateSort = 3;
+  // 0:time desc, 1:time asc, 2: category name desc, 3: category name asc
+
   String? query;
   TextEditingController controllerSearch = TextEditingController();
 
@@ -30,6 +33,19 @@ class _FeedTabState extends State<FeedTab> {
   void initState() {
     super.initState();
     getPosts();
+  }
+
+  List<Post> sortPost(List<Post> a) {
+    if (stateSort == 0) {
+      a.sort((Post x, Post y) => x.createdAt.isBefore(y.createdAt) ? 1 : -1);
+    } else if (stateSort == 1) {
+      a.sort((Post x, Post y) => x.createdAt.isBefore(y.createdAt) ? -1 : 1);
+    } else if (stateSort == 2) {
+      a.sort((Post x, Post y) => x.category.name.compareTo(y.category.name));
+    } else if (stateSort == 3) {
+      a.sort((Post x, Post y) => y.category.name.compareTo(x.category.name));
+    }
+    return a;
   }
 
   Future getPosts() async {
@@ -43,6 +59,12 @@ class _FeedTabState extends State<FeedTab> {
         duplicateAllPosts.add(Post.fromJson(bodyAll['data'][i]));
       }
     }
+
+    List<String> tesss = ['Web', 'Mobile', 'Other'];
+    tesss.sort((String a, String b) => b.compareTo(a));
+    print(tesss[0]);
+    print(tesss[1]);
+    print(tesss[2]);
 
     final responseFavorite =
         await FetchApi.get(baseApiUrl + '/forum/favorites');
@@ -58,6 +80,7 @@ class _FeedTabState extends State<FeedTab> {
 
     if (selectedIndex == -1) {
       setState(() {
+        duplicateAllPosts = sortPost(duplicateAllPosts);
         posts = duplicateAllPosts;
         duplicateActivePosts = duplicateAllPosts;
         isLoading = false;
@@ -133,6 +156,8 @@ class _FeedTabState extends State<FeedTab> {
                 RoundedToogleButton(
                   selected: selectedIndex,
                   onTapAll: () {
+                    print('hi');
+                    print(duplicateAllPosts);
                     setState(() {
                       // posts = duplicateAllPosts;
                       duplicateActivePosts = duplicateAllPosts;
@@ -158,7 +183,7 @@ class _FeedTabState extends State<FeedTab> {
                     });
                     updateListData();
                   },
-                ),                
+                ),
               ],
             )
           : const Center(

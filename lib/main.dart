@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/constant.dart';
+import 'package:prorum_flutter/screens/home/category_tab_screen.dart';
+import 'package:prorum_flutter/screens/home/feed_tab_screen.dart';
 import 'package:prorum_flutter/screens/home/home_screen.dart';
 import 'package:prorum_flutter/screens/welcome/welcome_screen.dart';
 import 'package:prorum_flutter/session.dart';
@@ -34,9 +36,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: Colors.white,
-        primarySwatch: const MaterialColor(0xFF007E7E, color)
+        primarySwatch: const MaterialColor(0xFF007E7E, color),
       ),
-      home: Session.isLoggedin ? const HomeScreen() : const WelcomeScreen(),
+      home: Session.isLoggedin
+          ? const CategoryTabScreen()
+          : const WelcomeScreen(),
     );
   }
 }

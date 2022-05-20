@@ -8,6 +8,7 @@ import 'package:prorum_flutter/components/rounded_input_field.dart';
 import 'package:prorum_flutter/components/rounded_password_field.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
+import 'package:prorum_flutter/screens/home/category_tab_screen.dart';
 import 'package:prorum_flutter/screens/home/home_screen.dart';
 import 'package:prorum_flutter/screens/login/login_screen.dart';
 import 'package:prorum_flutter/screens/signup/components/background.dart';
@@ -174,7 +175,7 @@ class _BodyState extends State<Body> {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) {
-                                return const HomeScreen();
+                                return const CategoryTabScreen();
                               },
                             ),
                             (route) => false,

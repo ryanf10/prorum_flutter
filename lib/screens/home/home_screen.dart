@@ -30,23 +30,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: TextStyle(color: Colors.black),
               ),
         centerTitle: true,
-        actions: currentTabIndex == 0
-            ? []
-            : [
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return const CreatePostScreen();
-                        },
-                      ),
-                    );
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.filter,
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) {
+                    return const CreatePostScreen();
                   },
-                  icon: const Icon(Icons.add),
-                )
-              ],
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+          )
+        ],
       ),
       body: Body(currentTabIndex: currentTabIndex),
       drawer: const LeftDrawer(),

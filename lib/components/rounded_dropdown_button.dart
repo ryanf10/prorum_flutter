@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:prorum_flutter/models/category.dart';
 
 class RoundedDropdownButton extends StatelessWidget {
   final List<DropdownMenuItem<String>> items;
@@ -28,7 +27,7 @@ class RoundedDropdownButton extends StatelessWidget {
         isExpanded: true,
         items: items,
         onChanged: onChanged,
-        underline: SizedBox(),
+        underline: const SizedBox(),
       ),
     );
   }

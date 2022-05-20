@@ -1,11 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:prorum_flutter/constant.dart';
-import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/detail_category.dart';
 import 'package:prorum_flutter/screens/post/posts_by_category_screen.dart';
-import 'package:prorum_flutter/screens/post/posts_screen.dart';
 
 class ListDetailCategories extends StatelessWidget {
   final List<DetailCategory> detailCategories;
@@ -50,38 +45,9 @@ class ListDetailCategories extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
                     Text(
                       detailCategories[index].formatPostCount(),
                     ),
-
-                    // ListTile(
-                    //   title: Text(
-                    //     detailCategories[index].name,
-                    //     style: const TextStyle(fontWeight: FontWeight.bold),
-                    //     overflow: TextOverflow.ellipsis,
-                    //   ),
-                    //   subtitle: Text(
-                    //     detailCategories[index].formatPostCount(),
-                    //   ),
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (BuildContext context) {
-                    //           return PostsScreen(
-                    //             url: baseApiUrl +
-                    //                 "/forum/posts?category=${detailCategories[index].categoryId}&sortBy=time&dir=desc",
-                    //             title: detailCategories[index].name,
-                    //           );
-                    //         },
-                    //       ),
-                    //     ).whenComplete(() {
-                    //       whenComplete();
-                    //     });
-                    //   },
-                    //   trailing: const Icon(Icons.arrow_forward_ios),
-                    // ),
                   ],
                 ),
               ),

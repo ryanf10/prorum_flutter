@@ -119,7 +119,7 @@ class _CategoryTabScreenState extends State<CategoryTabScreen> {
                                   });
                                 } else {
                                   setState(() {
-                                    stateSort = 0;
+                                    stateSort = stateSort - 2;
                                   });
                                 }
                                 changeSort();
@@ -144,7 +144,7 @@ class _CategoryTabScreenState extends State<CategoryTabScreen> {
                                   });
                                 } else {
                                   setState(() {
-                                    stateSort = 2;
+                                    stateSort = stateSort + 2;
                                   });
                                 }
                                 changeSort();

@@ -57,7 +57,6 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
         await FetchApi.get(baseApiUrl + '/forum/posts?sortBy=time&dir=desc');
 
     final bodyAll = jsonDecode(responseAll.body);
-    print(bodyAll);
 
     if (bodyAll['statusCode'] == 200) {
       for (int i = 0; i < bodyAll['data'].length; i++) {
@@ -181,7 +180,7 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                                   });
                                 } else {
                                   setState(() {
-                                    stateSort = 0;
+                                    stateSort = stateSort - 2;
                                   });
                                 }
                                 changeSort();
@@ -194,7 +193,7 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                                       : null,
                             ),
                             ListTile(
-                              title: Text('Category Name'),
+                              title: const Text('Category Name'),
                               onTap: () {
                                 if (stateSort == 3) {
                                   setState(() {
@@ -206,16 +205,16 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                                   });
                                 } else {
                                   setState(() {
-                                    stateSort = 2;
+                                    stateSort = stateSort + 2;
                                   });
                                 }
                                 changeSort();
                                 Navigator.pop(context);
                               },
                               trailing: (stateSort == 2)
-                                  ? Icon(Icons.arrow_upward)
+                                  ? const Icon(Icons.arrow_upward)
                                   : (stateSort == 3)
-                                      ? Icon(Icons.arrow_downward)
+                                      ? const Icon(Icons.arrow_downward)
                                       : null,
                             ),
                           ],

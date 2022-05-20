@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:prorum_flutter/constant.dart';
 
 class RoundedRectangleInputField extends StatelessWidget {
   final String hintText;

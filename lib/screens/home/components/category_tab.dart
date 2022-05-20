@@ -23,6 +23,13 @@ class _CategoryTabState extends State<CategoryTab> {
     getCategories();
   }
 
+  Future refreshData() async{
+    setState(() {
+      isLoading = true;
+    });
+    await getCategories();
+  }
+
   getCategories() async {
     final response = await FetchApi.get(baseApiUrl + '/forum/categories');
     final body = jsonDecode(response.body);
@@ -34,7 +41,10 @@ class _CategoryTabState extends State<CategoryTab> {
 
     for (int i = 0; i < temp.length; i++) {
       temp[i].image = Image.network(
-          baseApiUrl + "/forum/categories/${temp[i].categoryId}/image");
+        baseApiUrl + "/forum/categories/${temp[i].categoryId}/image",
+        headers: FetchApi.headers,
+        fit: BoxFit.cover,
+      );
     }
     setState(() {
       detailCategories = temp;
@@ -45,15 +55,16 @@ class _CategoryTabState extends State<CategoryTab> {
   @override
   Widget build(BuildContext context) {
     return !isLoading
-        ? Column(
-            children: [
-              ListDetailCategories(
-                detailCategories: detailCategories,
-                whenComplete: () async{
-
-                },
-              )
-            ],
+        ? RefreshIndicator(
+            onRefresh: refreshData,
+            child: Column(
+              children: [
+                ListDetailCategories(
+                  detailCategories: detailCategories,
+                  whenComplete: refreshData,
+                ),
+              ],
+            ),
           )
         : const Center(
             child: CircularProgressIndicator(

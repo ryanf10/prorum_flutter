@@ -23,7 +23,7 @@ class Post {
       title: json['title'],
       description: json['description'],
       category: Category.fromJson(json['category']),
-      createdAt: DateTime.parse(json['createdAt']).toLocal(),
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 }

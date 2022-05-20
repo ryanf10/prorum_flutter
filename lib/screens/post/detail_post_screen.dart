@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:prorum_flutter/components/circle_image.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
@@ -363,6 +364,16 @@ class _DetailPostScreenState extends State<DetailPostScreen> {
                                                 style: const TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 3.0),
+                                                child: Text(
+                                                  Jiffy(comments[i]
+                                                          .createdAt
+                                                          .toString())
+                                                      .fromNow(),
+                                                ),
                                               )
                                             ],
                                           ),

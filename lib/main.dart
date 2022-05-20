@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/screens/home/category_tab_screen.dart';
-import 'package:prorum_flutter/screens/home/feed_tab_screen.dart';
-import 'package:prorum_flutter/screens/home/home_screen.dart';
 import 'package:prorum_flutter/screens/welcome/welcome_screen.dart';
 import 'package:prorum_flutter/session.dart';
 

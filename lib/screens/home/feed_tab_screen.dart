@@ -7,7 +7,6 @@ import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/post.dart';
 import 'package:prorum_flutter/screens/home/category_tab_screen.dart';
 import 'package:prorum_flutter/screens/home/components/bottom_navbar.dart';
-import 'package:prorum_flutter/screens/home/components/category_tab.dart';
 import 'package:prorum_flutter/screens/home/components/left_drawer.dart';
 import 'package:prorum_flutter/screens/home/components/rounded_toogle_button.dart';
 import 'package:prorum_flutter/screens/post/components/list_posts.dart';
@@ -226,7 +225,7 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                   });
             },
             icon: const Icon(
-              Icons.filter,
+              Icons.filter_alt_outlined,
             ),
           ),
           IconButton(
@@ -238,7 +237,12 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                     return const CreatePostScreen();
                   },
                 ),
-              );
+              ).whenComplete(() async {
+                setState(() {
+                  controllerSearch.text = query ?? '';
+                });
+                updateListData();
+              });
             },
             icon: const Icon(Icons.add),
           )
@@ -278,8 +282,8 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                   ),
                   ListPosts(
                     posts: posts,
-                    whenComplete: () {
-                      refreshData();
+                    whenComplete: () async {
+                      await refreshData();
                       setState(() {
                         controllerSearch.text = query ?? '';
                       });

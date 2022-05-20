@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/models/detail_category.dart';
+import 'package:prorum_flutter/screens/post/posts_by_category_screen.dart';
 import 'package:prorum_flutter/screens/post/posts_screen.dart';
 
 class ListDetailCategories extends StatelessWidget {
@@ -89,9 +90,8 @@ class ListDetailCategories extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return PostsScreen(
-                        url: baseApiUrl +
-                            "/forum/posts?category=${detailCategories[index].categoryId}&sortBy=time&dir=desc",
+                      return PostsByCategoryScreen(
+                        categoryId: detailCategories[index].categoryId,
                         title: detailCategories[index].name,
                       );
                     },

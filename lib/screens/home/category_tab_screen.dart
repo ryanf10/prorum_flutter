@@ -8,7 +8,6 @@ import 'package:prorum_flutter/screens/home/components/bottom_navbar.dart';
 import 'package:prorum_flutter/screens/home/components/left_drawer.dart';
 import 'package:prorum_flutter/screens/home/components/list_detail_categories.dart';
 import 'package:prorum_flutter/screens/home/feed_tab_screen.dart';
-import 'package:prorum_flutter/screens/post/create_post_screen.dart';
 
 class CategoryTabScreen extends StatefulWidget {
   const CategoryTabScreen({Key? key}) : super(key: key);
@@ -89,7 +88,7 @@ class _CategoryTabScreenState extends State<CategoryTabScreen> {
         backgroundColor: Colors.white,
         foregroundColor: kPrimaryColor,
         title: const Text(
-          'Feed',
+          'Category',
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -133,7 +132,7 @@ class _CategoryTabScreenState extends State<CategoryTabScreen> {
                                       : null,
                             ),
                             ListTile(
-                              title: Text('Post Count'),
+                              title: const Text('Post Count'),
                               onTap: () {
                                 if (stateSort == 3) {
                                   setState(() {
@@ -152,9 +151,9 @@ class _CategoryTabScreenState extends State<CategoryTabScreen> {
                                 Navigator.pop(context);
                               },
                               trailing: (stateSort == 2)
-                                  ? Icon(Icons.arrow_upward)
+                                  ? const Icon(Icons.arrow_upward)
                                   : (stateSort == 3)
-                                      ? Icon(Icons.arrow_downward)
+                                      ? const Icon(Icons.arrow_downward)
                                       : null,
                             ),
                           ],
@@ -164,22 +163,9 @@ class _CategoryTabScreenState extends State<CategoryTabScreen> {
                   });
             },
             icon: const Icon(
-              Icons.filter,
+              Icons.filter_alt_outlined,
             ),
           ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) {
-                    return const CreatePostScreen();
-                  },
-                ),
-              );
-            },
-            icon: const Icon(Icons.add),
-          )
         ],
       ),
       body: !isLoading

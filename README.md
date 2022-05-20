@@ -11,10 +11,12 @@ Aplikasi mobile berupa forum diskusi bagi para programmer yang dibuat dengan Flu
 2. Pastikan flutter telah terinstall di komputer. Untuk memastikan flutter telah terinstall dengan baik jalankan perintah `flutter doctor`
 3. Masuk ke direktori project
 4. Jalankan perintah `flutter pub get`
-5. Buka Teks Editor (Visual Studio Code, Android Studio, dll) dan jalankan aplikasi menggunakan perangkat virtual atau perangkat fisik. Jika menggunakan Visual Studio Code, mohon install extension untuk Flutter kemudian buka file main.dart lalu tekan tombol Run di pojok kanan atas.<br>
+5. Buka Teks Editor (Visual Studio Code, Android Studio, dll) dan jalankan aplikasi menggunakan perangkat virtual atau perangkat fisik. Jika menggunakan Visual Studio Code, mohon install extension untuk Flutter kemudian buka file `lib\main.dart` lalu tekan tombol panah pada simbol Run di pojok kanan atas (pilih Run Without Debugging).<br>
 6. Gunakan user dummy berikut jika tidak ingin melakukan registrasi<br>
-   email: admin@admin.com<br>
-   password: adminadmin<br>
+   ```
+   email: admin@admin.com
+   password: adminadmin
+   ```
 
 NB: saat run pertama kali akan memakan waktu yang cukup lama
 

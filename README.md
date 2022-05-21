@@ -24,7 +24,9 @@ NB: saat run pertama kali akan memakan waktu yang cukup lama
 
 Backend aplikasi Prorum (NestJs): https://github.com/ryanf10/nest-prorum<br>
 Dokumentasi API: https://documenter.getpostman.com/view/17019834/UyxohPAN<br>
-Base URL backend deployment: https://nest-prorum.herokuapp.com/<br>
+Base API URL: https://nest-prorum.herokuapp.com/<br>
+Landing page project + reset password page (NextJs): https://github.com/ryanf10/prorum_next<br>
+Landing page: https://prorum.vercel.app/<br>
 
 # prorum_flutter
 

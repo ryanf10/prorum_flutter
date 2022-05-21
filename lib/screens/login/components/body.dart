@@ -10,6 +10,7 @@ import 'package:prorum_flutter/constant.dart';
 import 'package:prorum_flutter/fetch_api.dart';
 import 'package:prorum_flutter/screens/home/category_tab_screen.dart';
 import 'package:prorum_flutter/screens/login/components/background.dart';
+import 'package:prorum_flutter/screens/reset_password/reset_password_screen.dart';
 import 'package:prorum_flutter/screens/signup/signup_screen.dart';
 import 'package:prorum_flutter/session.dart';
 
@@ -154,6 +155,28 @@ class _BodyState extends State<Body> {
                   },
                 ),
               ],
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10.0),
+              child: GestureDetector(
+                child: const Text(
+                  'Forgot Password?',
+                  style: TextStyle(
+                    color: kPrimaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return const ResetPassordScreen();
+                      },
+                    ),
+                  );
+                },
+              ),
             ),
             AlreadyHaveAnAccountCheck(
               press: () {

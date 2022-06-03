@@ -82,9 +82,9 @@ class _PostsByCategoryScreenState extends State<PostsByCategoryScreen> {
 
   Future refreshData() async {
     setState(() {
+      duplicateAllPosts = [];
       isLoading = true;
     });
-    duplicateAllPosts = [];
     await getPosts();
   }
 
@@ -103,27 +103,30 @@ class _PostsByCategoryScreenState extends State<PostsByCategoryScreen> {
         title: Text(widget.title),
       ),
       body: !isLoading
-          ? Column(
-              children: [
-                RoundedRectangleInputField(
-                  hintText: "search",
-                  onChanged: searchItem,
-                  icon: Icons.search,
-                  controller: controllerSearch,
-                  isError: false,
-                ),
-                ListPosts(
-                  posts: posts,
-                  whenComplete: () async {
-                    setState(() {
-                      isLoading = true;
-                      posts = [];
-                    });
-                    await getPosts();
-                  },
-                ),
-              ],
-            )
+          ? RefreshIndicator(
+            onRefresh: refreshData,
+            child: Column(
+                children: [
+                  RoundedRectangleInputField(
+                    hintText: "search",
+                    onChanged: searchItem,
+                    icon: Icons.search,
+                    controller: controllerSearch,
+                    isError: false,
+                  ),
+                  ListPosts(
+                    posts: posts,
+                    whenComplete: () async {
+                      await refreshData();
+                      setState(() {
+                        controllerSearch.text = query ?? '';
+                      });                      
+                      updateListData();
+                    },
+                  ),
+                ],
+              ),
+          )
           : const Center(
               child: CircularProgressIndicator(
                 color: kPrimaryColor,

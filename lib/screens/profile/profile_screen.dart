@@ -171,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: Colors.black,
                                       ),
                                       label: const Text(
-                                        'Choose From Camera',
+                                        'Open Camera',
                                         style: TextStyle(color: Colors.black),
                                       ),
                                       onPressed: imagePickerFromCamera,

@@ -237,6 +237,7 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                   },
                 ),
               ).whenComplete(() async {
+                await refreshData();
                 setState(() {
                   controllerSearch.text = query ?? '';
                 });

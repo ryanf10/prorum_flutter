@@ -26,8 +26,7 @@ class _PostsScreenState extends State<PostsScreen> {
   bool isLoading = true;
 
   Future getPosts() async {
-    final responseAll =
-        await FetchApi.get(widget.url);
+    final responseAll = await FetchApi.get(widget.url);
 
     final bodyAll = jsonDecode(responseAll.body);
 
@@ -37,14 +36,13 @@ class _PostsScreenState extends State<PostsScreen> {
       }
     }
 
-
     setState(() {
       posts = duplicateAllPosts;
       isLoading = false;
     });
   }
 
-  searchItem(value){
+  searchItem(value) {
     if (value != null && value != '') {
       List<Post> temp = [];
       for (int i = 0; i < duplicateAllPosts.length; i++) {
@@ -87,6 +85,9 @@ class _PostsScreenState extends State<PostsScreen> {
       body: !isLoading
           ? Column(
               children: [
+                const SizedBox(
+                  height: 10,
+                ),
                 RoundedRectangleInputField(
                   hintText: "search",
                   onChanged: searchItem,
@@ -94,9 +95,12 @@ class _PostsScreenState extends State<PostsScreen> {
                   controller: null,
                   isError: false,
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
                 ListPosts(
                   posts: posts,
-                  whenComplete: () async{
+                  whenComplete: () async {
                     setState(() {
                       isLoading = true;
                       posts = [];

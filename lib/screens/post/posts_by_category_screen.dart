@@ -104,9 +104,12 @@ class _PostsByCategoryScreenState extends State<PostsByCategoryScreen> {
       ),
       body: !isLoading
           ? RefreshIndicator(
-            onRefresh: refreshData,
-            child: Column(
+              onRefresh: refreshData,
+              child: Column(
                 children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
                   RoundedRectangleInputField(
                     hintText: "search",
                     onChanged: searchItem,
@@ -114,19 +117,22 @@ class _PostsByCategoryScreenState extends State<PostsByCategoryScreen> {
                     controller: controllerSearch,
                     isError: false,
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   ListPosts(
                     posts: posts,
                     whenComplete: () async {
                       await refreshData();
                       setState(() {
                         controllerSearch.text = query ?? '';
-                      });                      
+                      });
                       updateListData();
                     },
                   ),
                 ],
               ),
-          )
+            )
           : const Center(
               child: CircularProgressIndicator(
                 color: kPrimaryColor,

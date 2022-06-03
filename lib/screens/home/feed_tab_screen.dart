@@ -254,12 +254,18 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
         child: !isLoading
             ? Column(
                 children: [
+                  const SizedBox(
+                    height: 10,
+                  ),
                   RoundedRectangleInputField(
                     hintText: "search",
                     onChanged: searchItem,
                     icon: Icons.search,
                     controller: controllerSearch,
                     isError: false,
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   RoundedToogleButton(
                     selected: selectedIndex,
@@ -279,6 +285,9 @@ class _FeedTabScreenState extends State<FeedTabScreen> {
                       });
                       updateListData();
                     },
+                  ),
+                  const SizedBox(
+                    height: 10,
                   ),
                   ListPosts(
                     posts: posts,
